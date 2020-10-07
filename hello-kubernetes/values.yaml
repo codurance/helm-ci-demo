@@ -1,0 +1,11 @@
+environment:
+serviceAccount:
+  name: hello-sa
+deployment:
+  name: hello-kubernetes
+  port: 8080
+  message: I deploy with Helm!
+service:
+  name: hello-service
+  port: 80
+
