@@ -1,6 +1,6 @@
 name: Test with KinD
 
-on: push
+on: pull_request
 
 jobs:
   lint-test:
@@ -29,6 +29,7 @@ jobs:
           command: install
 
       - name: List pods
+        if: steps.lint.outputs.changed == 'true'
         run: |
           kubectl get pods --all-namespaces
           kubectl get services --all-namespaces
