@@ -24,12 +24,28 @@ jobs:
         if: steps.lint.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
+        if: steps.lint.outputs.changed == 'true'
         uses: helm/chart-testing-action@v1.0.0
         with:
           command: install
+
+      - name: Install chart
+        if: steps.lint.outputs.changed == 'true'
+        run: |
+          kubectl create namespace hello
+          helm install hello-kubernetes --namespace hello --generate-name
 
       - name: List pods
         if: steps.lint.outputs.changed == 'true'
         run: |
           kubectl get pods --all-namespaces
           kubectl get services --all-namespaces
+
+      - name: Port Forward to Service
+        if: steps.lint.outputs.changed == 'true'
+        run: 'kubectl port-forward -n hello service/hello-service 8081:80 &'
+
+      - name: Test App
+        if: steps.lint.outputs.changed == 'true'
+        run: |
+          curl -s localhost:8081 | grep "I deploy with Helm 3\\\!"
