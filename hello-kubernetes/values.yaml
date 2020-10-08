@@ -8,4 +8,3 @@ deployment:
 service:
   name: hello-service
   port: 80
-

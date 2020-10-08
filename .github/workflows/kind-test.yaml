@@ -41,6 +41,11 @@ jobs:
           kubectl get pods --all-namespaces
           kubectl get services --all-namespaces
 
+      - name: Wait for app
+        if: steps.lint.outputs.changed == 'true'
+        run: |
+          while [[ $(kubectl get pods -n hello -l app=hello-kubernetes -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True True" ]]; do echo "waiting for pod" && sleep 1; done
+
       - name: Port Forward to Service
         if: steps.lint.outputs.changed == 'true'
         run: 'kubectl port-forward -n hello service/hello-service 8081:80 &'
@@ -48,4 +53,4 @@ jobs:
       - name: Test App
         if: steps.lint.outputs.changed == 'true'
         run: |
-          curl -s localhost:8081 | grep "I deploy with Helm 3\\\!"
+          curl -v localhost:8081

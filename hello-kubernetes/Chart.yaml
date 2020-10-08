@@ -3,3 +3,7 @@ name: hellokubernetes
 description: A simple Helm chart for running Hello Kubernetes
 type: application
 version: 0.0.2
+home: github.com/codurance/helm-ci-demo
+maintainers:
+  - name: gargath
+    email: phil.taprogge@codurance.com
