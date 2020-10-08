@@ -2,4 +2,4 @@ apiVersion: v2
 name: hellokubernetes
 description: A simple Helm chart for running Hello Kubernetes
 type: application
-version: 0.0.1
+version: 0.0.2
