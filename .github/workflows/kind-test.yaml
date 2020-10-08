@@ -24,12 +24,33 @@ jobs:
         if: steps.lint.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
+        if: steps.lint.outputs.changed == 'true'
         uses: helm/chart-testing-action@v1.0.0
         with:
           command: install
+
+      - name: Install chart
+        if: steps.lint.outputs.changed == 'true'
+        run: |
+          kubectl create namespace hello
+          helm install hello-kubernetes --namespace hello --generate-name
 
       - name: List pods
         if: steps.lint.outputs.changed == 'true'
         run: |
           kubectl get pods --all-namespaces
           kubectl get services --all-namespaces
+
+      - name: Wait for app
+        if: steps.lint.outputs.changed == 'true'
+        run: |
+          while [[ $(kubectl get pods -n hello -l app=hello-kubernetes -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True True" ]]; do echo "waiting for pod" && sleep 1; done
+
+      - name: Port Forward to Service
+        if: steps.lint.outputs.changed == 'true'
+        run: 'kubectl port-forward -n hello service/hello-service 8081:80 &'
+
+      - name: Test App
+        if: steps.lint.outputs.changed == 'true'
+        run: |
+          curl -v localhost:8081
