@@ -4,7 +4,7 @@ serviceAccount:
 deployment:
   name: hello-kubernetes
   port: 8080
-  message: I deploy with Helm!
+  message: I deploy with Helm 3!
 service:
   name: hello-service
   port: 80
