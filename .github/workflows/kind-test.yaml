@@ -43,6 +43,8 @@ jobs:
 
       - name: Wait for app
         if: steps.lint.outputs.changed == 'true'
+        # TODO: If the Pods never become Ready, e.g. because of config or image problems, this will hang until the workflow
+        # times out. Should add a timeout condition to the loop.
         run: |
           while [[ $(kubectl get pods -n hello -l app=hello-kubernetes -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True True" ]]; do echo "waiting for pod" && sleep 1; done
 
